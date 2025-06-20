@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Running make check..."
+make check || exit 1
+
+echo "Running make test..."
+make test || exit 1
+

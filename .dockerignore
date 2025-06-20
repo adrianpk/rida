@@ -1,0 +1,9 @@
+.envrc
+.git
+.gitignore
+*.md
+docs/
+scripts/
+bin/
+.vscode/
+.idea/

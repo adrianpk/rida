@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      RIDA_PG_HOST: postgres
+      RIDA_PG_PORT: 5432
+      RIDA_PG_USER: postgres
+      RIDA_PG_PASSWORD: postgres
+      RIDA_PG_DBNAME: rida
+      RIDA_PG_SSLMODE: disable
+
+  postgres:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rida
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -d rida && psql -U postgres -d rida -c 'SELECT 1;'",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres_data:
